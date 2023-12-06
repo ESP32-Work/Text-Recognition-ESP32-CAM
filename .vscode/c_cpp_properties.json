@@ -1,0 +1,29 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/ibrahim/install/micro_ros_agent/include/**",
+        "/home/ibrahim/install/micro_ros_msgs/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/ibrahim/mros_ws/src/uros/micro-ROS-Agent/micro_ros_agent/include/**",
+        "/home/ibrahim/robotisim_ws/src/drive_turtlesim/include/**",
+        "/home/ibrahim/ros2_ws/src/cpp_pkg/include/**",
+        "/home/ibrahim/ros_packages/basic/include/**",
+        "/home/ibrahim/ros_packages/jani_bot/include/**",
+        "/home/ibrahim/running_ws/src/mobile_robotics_ROS2/turtlebot3_simulations/turtlebot3_gazebo/include/**",
+        "/home/ibrahim/src/uros/micro-ROS-Agent/micro_ros_agent/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
