@@ -1,0 +1,73 @@
+name: build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: arduino/setup-arduino-cli@v1
+      - id: cores
+        name: Refresh Arduino cores
+        run: |
+          echo 'https://espressif.github.io/arduino-esp32/package_esp32_index.json' >~/arduino-cores.txt
+          arduino-cli version
+          arduino-cli update --additional-urls "$(<~/arduino-cores.txt)"
+          echo d=$(sha256sum ~/.arduino15/package_*index.json | sha256sum | cut -d' ' -f1) >> $GITHUB_OUTPUT
+      - name: Cache Arduino cores
+        uses: actions/cache@v3
+        with:
+          path: ~/.arduino15/staging/packages
+          key: cores-${{ steps.cores.outputs.d }}
+      - name: Install Arduino cores
+        run: |
+          arduino-cli core install esp32:esp32 --additional-urls "$(<~/arduino-cores.txt)"
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends clang-format-11 doxygen
+      - uses: actions/checkout@v3
+      - name: Check code style
+        run: |
+          mk/format-code.sh
+          git diff --exit-code
+      - name: Prepare Arduino libraries
+        run: |
+          mkdir -p $HOME/Arduino/libraries
+          cd $HOME/Arduino/libraries
+          ln -s $GITHUB_WORKSPACE esp32cam
+          mkdir -p AsyncTCP ESPAsyncWebServer ODROID-GO
+          curl -fsLS https://github.com/me-no-dev/AsyncTCP/archive/${ASYNCTCP_VERSION}.tar.gz \
+            | tar -C AsyncTCP -xz --strip-components=1
+          curl -fsLS https://github.com/me-no-dev/ESPAsyncWebServer/archive/${ESPASYNCWEBSERVER_VERSION}.tar.gz \
+            | tar -C ESPAsyncWebServer -xz --strip-components=1
+          curl -fsLS https://github.com/hardkernel/ODROID-GO/archive/${ODROIDGO_VERSION}.tar.gz \
+            | tar -C ODROID-GO -xz --strip-components=1 --wildcards '*/library.properties' '*/src/odroid_go.*' '*/src/Fonts' '*/src/utility'
+        env:
+          ASYNCTCP_VERSION: ca8ac5f919d02bea07b474531981ddbfd64de97c
+          ESPASYNCWEBSERVER_VERSION: 1d46269cedf477661ca8a29518414f4b74e957d4
+          ODROIDGO_VERSION: 4a496e337d16bca4ddedbeca3486d7b60662d017
+      - name: Compile examples
+        run: |
+          arduino-cli compile -b esp32:esp32:esp32wrover ./examples/WifiCam
+          arduino-cli compile -b esp32:esp32:esp32wrover ./examples/AsyncCam
+          arduino-cli compile -b esp32:esp32:odroid_esp32 ./examples/GoDisplay
+      - name: Build docs
+        run: docs/build.sh
+      - name: Deploy docs
+        uses: nwtgck/actions-netlify@30aa80fe8d5eec30813fc8b17b77e0a6663f09b5
+        with:
+          publish-dir: ./docs/html/
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: ${{ github.sha }} ${{ github.run_id }}
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          enable-commit-status: false
+          enable-github-deployment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: 7de100ca-e942-419d-af2c-18e6c528b96e
+        if: ${{ github.repository == 'yoursunny/esp32cam' && github.event_name == 'push' }}
+    timeout-minutes: 30
