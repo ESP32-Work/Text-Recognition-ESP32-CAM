@@ -101,6 +101,8 @@ cv2.destroyAllWindows()
 
 ## Demo
 
+[Screencast from 12-14-2023 01:27:30 AM.webm](https://github.com/ESP32-Work/Text-Recognition-ESP32-CAM/assets/81290322/b9acfa72-a46f-4536-a052-0e22f2cb0e27)
+
 ## Libraries Used
 - WebServer
 - WiFi
