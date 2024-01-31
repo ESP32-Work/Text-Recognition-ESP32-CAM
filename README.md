@@ -6,7 +6,7 @@
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Code Explanation](#code-explanation)
-    - [Arduino Code](#arduino-code)
+    - [Esp Code](#esp-code)
     - [Python Code](#python-code)
 6. [Demo](#demo)
 7. [Libraries Used](#libraries-used)
@@ -27,7 +27,7 @@ This project utilizes an ESP32-CAM module to capture images, perform Optical Cha
 
 ## Installation
 1. Clone this repository.
-2. Upload the Arduino code to the ESP32-CAM using Arduino IDE or PlatformIO in VS Code.
+2. Upload the code to the ESP32-CAM using Arduino IDE or PlatformIO in VS Code.
 3. Ensure Python is installed on your system.
 4. Install required Python libraries using:
     ```bash
@@ -47,8 +47,8 @@ This project utilizes an ESP32-CAM module to capture images, perform Optical Cha
 
 ## Code Explanation
 
-### Arduino Code
-The Arduino code configures the ESP32-CAM, sets up a web server, and handles different image resolutions. It uses the `esp32cam` library to capture images and serve them through HTTP.
+### Esp32 Code
+The code configures the ESP32-CAM, sets up a web server, and handles different image resolutions. It uses the `esp32cam` library to capture images and serve them through HTTP.
 
 Snippet:
 ```cpp
